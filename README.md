@@ -1,2 +1,2 @@
-# Program
+# Chess reinforcement learning code
 hi
