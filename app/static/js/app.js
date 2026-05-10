@@ -1,6 +1,9 @@
 /* ── Agentic Judge Dashboard ─────────────────────────────────────────────── */
 
-const API = "";
+const API = (() => {
+  const u = new URL(window.location.href);
+  return `${u.protocol}//${u.host}`;
+})();
 let authToken = localStorage.getItem("aj_token");
 let currentUser = null;
 let ws = null;
