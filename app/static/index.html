@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic Judge — Human Taste Engine</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ── Auth Page ──────────────────────────────────────────────────────────── -->
+<div id="auth-page" class="auth-container">
+  <div class="auth-card">
+    <div class="logo">Agentic Judge</div>
+    <div class="tagline">Human Taste Engine &amp; Autonomous Operator</div>
+
+    <div id="auth-alert" class="alert"></div>
+
+    <div class="form-group" id="email-group">
+      <label>Email</label>
+      <input type="email" id="auth-email" class="form-input" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="auth-username" class="form-input" placeholder="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="auth-password" class="form-input" placeholder="Min 8 characters">
+    </div>
+
+    <button id="auth-submit" class="btn btn-primary" style="width:100%" onclick="signup()">Sign Up</button>
+
+    <div class="auth-toggle" id="auth-toggle-text">
+      Already have an account? <a onclick="toggleAuthMode()">Log in</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Dashboard ─────────────────────────────────────────────────────────── -->
+<div id="dashboard-page" class="app-container hidden">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">Agentic Judge</div>
+    <div class="subtitle">Human Taste Engine</div>
+
+    <div class="nav-item active" data-page="judge" onclick="navigate('judge')">
+      <span class="icon">&#9878;</span> Judge Pipeline
+    </div>
+    <div class="nav-item" data-page="keys" onclick="navigate('keys')">
+      <span class="icon">&#128273;</span> API Keys
+    </div>
+    <div class="nav-item" data-page="simulator" onclick="navigate('simulator')">
+      <span class="icon">&#128100;</span> User Simulator
+    </div>
+    <div class="nav-item" data-page="browser" onclick="navigate('browser')">
+      <span class="icon">&#127760;</span> Computer Use
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-details">
+          <div class="name" id="user-name">User</div>
+          <div class="email" id="user-email">email</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%;margin-top:8px" onclick="logout()">Log Out</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- ── Judge Page ──────────────────────────────────────────────────── -->
+    <div id="page-judge" class="page-content">
+      <div id="session-stats" class="stats-grid"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">New Judge Session</div>
+            <div class="card-subtitle">Submit content for the Conflict Loop evaluation pipeline</div>
+          </div>
+        </div>
+        <div id="judge-alert" class="alert"></div>
+        <div class="form-group">
+          <label>Prompt / Content</label>
+          <textarea id="judge-prompt" class="form-input" placeholder="Enter the content or prompt to evaluate through the judge pipeline..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Max Iterations</label>
+          <input type="number" id="judge-max-iter" class="form-input" value="5" min="1" max="20" style="width:120px">
+        </div>
+        <button id="judge-submit" class="btn btn-primary" onclick="startJudgeSession()">Run Judge Pipeline</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Recent Sessions</div>
+        <div id="sessions-list"></div>
+      </div>
+
+      <div id="session-detail" class="hidden"></div>
+    </div>
+
+    <!-- ── API Keys Page ──────────────────────────────────────────────── -->
+    <div id="page-keys" class="page-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">API Keys</div>
+            <div class="card-subtitle">Generate keys to connect the Human Taste engine to your tools</div>
+          </div>
+        </div>
+        <div id="key-alert" class="alert"></div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <input type="text" id="key-name" class="form-input" placeholder="Key name (e.g. My App)" style="flex:1">
+          <button class="btn btn-primary" onclick="createAPIKey()">Generate Key</button>
+        </div>
+        <div id="keys-list"></div>
+      </div>
+    </div>
+
+    <!-- ── Simulator Page ────────────────────────────────────────────── -->
+    <div id="page-simulator" class="page-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">User Simulator</div>
+            <div class="card-subtitle">Find UX friction points by simulating user personas</div>
+          </div>
+        </div>
+        <div id="sim-alert" class="alert"></div>
+        <div class="form-group">
+          <label>Target URL</label>
+          <input type="url" id="sim-url" class="form-input" placeholder="https://example.com">
+        </div>
+        <div class="form-group">
+          <label>User Persona</label>
+          <select id="sim-persona" class="form-input">
+            <option value="general_user">General User</option>
+            <option value="power_user">Power User</option>
+            <option value="novice">Novice</option>
+            <option value="accessibility">Accessibility Focus</option>
+          </select>
+        </div>
+        <button id="sim-submit" class="btn btn-primary" onclick="runSimulator()">Run Simulation</button>
+      </div>
+      <div id="sim-results" class="hidden"></div>
+    </div>
+
+    <!-- ── Computer Use Page ─────────────────────────────────────────── -->
+    <div id="page-browser" class="page-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Computer Use — Browser Automation</div>
+            <div class="card-subtitle">Autonomously interact with web platforms using Playwright</div>
+          </div>
+        </div>
+        <div id="browser-alert" class="alert"></div>
+        <div class="form-group">
+          <label>Target URL</label>
+          <input type="url" id="browser-url" class="form-input" placeholder="https://chat.openai.com">
+        </div>
+        <div class="form-group">
+          <label>Actions (JSON array)</label>
+          <textarea id="browser-actions" class="form-input" placeholder='[{"type": "screenshot", "name": "initial"}, {"type": "type", "selector": "textarea", "text": "Hello"}]'></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runBrowserAction()">Execute</button>
+        <div id="browser-results" class="mt-16 hidden"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Quick Platform Interaction</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <button class="btn btn-outline btn-sm" onclick="quickPlatform('chatgpt')">ChatGPT</button>
+          <button class="btn btn-outline btn-sm" onclick="quickPlatform('claude')">Claude</button>
+          <button class="btn btn-outline btn-sm" onclick="quickPlatform('gemini')">Gemini</button>
+        </div>
+        <div class="form-group">
+          <label>Prompt to Send</label>
+          <input type="text" id="platform-prompt" class="form-input" placeholder="Enter a prompt to send to the platform">
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+async function runBrowserAction() {
+  const url = document.getElementById("browser-url").value;
+  let actions = [];
+  try {
+    actions = JSON.parse(document.getElementById("browser-actions").value || "[]");
+  } catch { showAlert("browser-alert", "Invalid JSON", "error"); return; }
+
+  try {
+    const result = await api("/api/simulator/browser", {
+      method: "POST",
+      body: JSON.stringify({ url, actions }),
+    });
+    const el = document.getElementById("browser-results");
+    el.classList.remove("hidden");
+    el.innerHTML = `<div class="output-display">${esc(JSON.stringify(result, null, 2))}</div>`;
+  } catch (e) {
+    showAlert("browser-alert", e.message, "error");
+  }
+}
+
+async function quickPlatform(platform) {
+  const prompt = document.getElementById("platform-prompt").value;
+  if (!prompt) { showAlert("browser-alert", "Enter a prompt first", "error"); return; }
+  try {
+    const result = await api(`/api/simulator/platform/${platform}`, {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+    });
+    const el = document.getElementById("browser-results");
+    el.classList.remove("hidden");
+    el.innerHTML = `<div class="output-display">${esc(JSON.stringify(result, null, 2))}</div>`;
+  } catch (e) {
+    showAlert("browser-alert", e.message, "error");
+  }
+}
+</script>
+<script src="/js/app.js"></script>
+</body>
+</html>
